@@ -155,11 +155,15 @@ func (h *Hivex) Root() (int64, error) {
 // NodeName returns the name of the specified node
 func (h *Hivex) NodeName(node int64) (string, error) {
 	n := (C.size_t)(node)
-	ret, err := C.hivex_node_name(h.han, n)
+	name, err := C.hivex_node_name(h.han, n)
 	if err != nil {
 		return "", err
 	}
-	return C.GoString(ret), nil
+	nameLen, err := C.hivex_node_name_len(h.han, n)
+	if err != nil {
+		return "", err
+	}
+	return C.GoStringN(name, C.int(nameLen)), nil
 }
 
 // NodeNameLen returns the node name length
@@ -297,11 +301,16 @@ func (h *Hivex) NodeValueKeyLen(value int64) (int64, error) {
 func (h *Hivex) NodeValueKey(value int64) (string, error) {
 	n := (C.hive_value_h)(value)
 
-	ret, err := C.hivex_value_key(h.han, n)
+	valKey, err := C.hivex_value_key(h.han, n)
 	if err != nil {
 		return "", err
 	}
-	return C.GoString(ret), nil
+
+	valLen, err := C.hivex_value_key_len(h.han, n)
+	if err != nil {
+		return "", err
+	}
+	return C.GoStringN(valKey, C.int(valLen)), nil
 }
 
 // NodeValueType returns the value type
