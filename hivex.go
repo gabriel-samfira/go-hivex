@@ -60,13 +60,15 @@ import (
 )
 
 const (
+	// READONLY opens the hive as readonly
+	READONLY = 0
 	// VERBOSE instructs hivex to open the registry hive verbosely
 	VERBOSE = C.HIVEX_OPEN_VERBOSE
 	// DEBUG enables debug
 	DEBUG = C.HIVEX_OPEN_DEBUG
 	// WRITE opens the hive in write mode
 	WRITE = C.HIVEX_OPEN_WRITE
-	// UNSAFE opens the hive in unsafe mode
+	// UNSAFE enables heuristics to allow read/write of corrupted hives
 	UNSAFE = C.HIVEX_OPEN_UNSAFE
 )
 
