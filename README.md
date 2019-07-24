@@ -51,5 +51,20 @@ func main() {
     }
     // print out the name (should be "ModerateValueParent")
     fmt.Println(childName)
+
+    // Get the value offset of a key called "33Bytes" that lives in
+    // \\ModerateValueParent
+    valueOffset, err := hive.NodeGetValue(child, "33Bytes")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Get the actual value of that key. It should be a REG_BINARY (3)
+    // with a value of 0123456789ABCDEF0123456789ABCDEF0
+    valType, value, err := hive.ValueValue(valueOffset)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println(valType, string(value))
 }
 ```
