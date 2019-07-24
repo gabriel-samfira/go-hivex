@@ -70,3 +70,12 @@ func main() {
     fmt.Println(valType, string(value))
 }
 ```
+
+## Tests
+
+
+The image files were shamelessly copied from the hivex package, and tests are based on the same tests in that package for the various other bindings.
+
+```bash
+$ go test github.com/gabriel-samfira/go-hivex/...
+```

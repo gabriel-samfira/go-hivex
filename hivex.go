@@ -55,7 +55,6 @@ int set_values(hive_set_value *vals, int idx, int size, hive_set_value converted
 import "C"
 import (
 	"fmt"
-	//	"syscall"
 	"unsafe"
 )
 
@@ -248,7 +247,6 @@ func (h *Hivex) NodeParent(node int64) (int64, error) {
 
 // NodeValues returns a list of values set for this node
 func (h *Hivex) NodeValues(node int64) ([]int64, error) {
-	//extern hive_value_h *hivex_node_values (hive_h *h, hive_node_h node);
 	n := (C.size_t)(node)
 
 	ret, err := C.hivex_node_values(h.han, n)
@@ -471,7 +469,6 @@ type HiveValue struct {
 
 // NodeSetValues sets values on a node
 func (h *Hivex) NodeSetValues(node int64, values []HiveValue) (int, error) {
-	//extern int hivex_node_set_values (hive_h *h, hive_node_h node, size_t nr_values, const hive_set_value *values, int flags);
 	n := (C.hive_node_h)(node)
 	var sz C.size_t = (C.ulong)(len(values))
 	var val C.hive_set_value
@@ -479,7 +476,6 @@ func (h *Hivex) NodeSetValues(node int64, values []HiveValue) (int, error) {
 		C.malloc(
 			C.size_t(
 				int64(unsafe.Sizeof(val)) * int64(sz),
-				// int64(unsafe.Sizeof(val)),
 			),
 		),
 	)
@@ -506,7 +502,6 @@ func (h *Hivex) NodeSetValues(node int64, values []HiveValue) (int, error) {
 
 // NodeSetValue sets the value on one node
 func (h *Hivex) NodeSetValue(node int64, value HiveValue) (int, error) {
-	//extern int hivex_node_set_values (hive_h *h, hive_node_h node, size_t nr_values, const hive_set_value *values, int flags);
 	n := (C.hive_node_h)(node)
 	var val C.hive_set_value
 	var newVal *C.hive_set_value = (*C.hive_set_value)(
@@ -535,7 +530,6 @@ func (h *Hivex) NodeSetValue(node int64, value HiveValue) (int, error) {
 
 // Commit commits all changes to the reg binary
 func (h *Hivex) Commit() (int, error) {
-	//extern int hivex_commit (hive_h *h, const char *filename, int flags);
 	ret, err := C.hivex_commit(h.han, h.file, 0)
 	if err != nil {
 		return 0, err
