@@ -26,8 +26,10 @@ func main() {
         "testdata",
         "rlenvalue_test_hive")
 
-    // If you plan to write to the hive, replace
-    hive, err := hivex.NewHivex(hivePath, hivex.READONLY)
+    // If you plan to write to the hive, replace hivex.READ
+    // with hivex.WRITE. You may also enable verbose, debug or
+    // unsafe (hivex.WRITE | hivex.DEBUG | hivex.UNSAFE)
+    hive, err := hivex.NewHivex(hivePath, hivex.READ)
     if err != nil {
         log.Fatal(err)
     }

@@ -60,8 +60,8 @@ import (
 )
 
 const (
-	// READONLY opens the hive as readonly
-	READONLY = 0
+	// READ opens the hive as readonly
+	READ = 0
 	// VERBOSE instructs hivex to open the registry hive verbosely
 	VERBOSE = C.HIVEX_OPEN_VERBOSE
 	// DEBUG enables debug
