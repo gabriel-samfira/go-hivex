@@ -2,6 +2,8 @@
 
 Golang bindings for [hivex](https://github.com/libguestfs/hivex).
 
+Minimum hivex version is ```1.3.14```
+
 ## Basic usage
 
 ```go

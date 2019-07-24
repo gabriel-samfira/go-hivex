@@ -28,6 +28,12 @@ size_t memberSize(hive_node_h *r) {
 	return len;
 }
 
+size_t memberSizeValue(hive_value_h *r) {
+	size_t i, len = 0;
+	for (i = 0; r[i] != 0; ++i) len++;
+	return len;
+}
+
 size_t stringMembersSize(char **r) {
 	size_t i, len = 0;
     for (i = 0; r[i] != NULL; ++i) len++;
@@ -155,7 +161,7 @@ func (h *Hivex) Root() (int64, error) {
 
 // NodeName returns the name of the specified node
 func (h *Hivex) NodeName(node int64) (string, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	name, err := C.hivex_node_name(h.han, n)
 	if err != nil {
 		return "", err
@@ -169,7 +175,7 @@ func (h *Hivex) NodeName(node int64) (string, error) {
 
 // NodeNameLen returns the node name length
 func (h *Hivex) NodeNameLen(node int64) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	ret, err := C.hivex_node_name_len(h.han, n)
 	if err != nil {
 		return 0, err
@@ -179,7 +185,7 @@ func (h *Hivex) NodeNameLen(node int64) (int64, error) {
 
 // NodeTimestamp returns the node timestamp
 func (h *Hivex) NodeTimestamp(node int64) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	ret, err := C.hivex_node_timestamp(h.han, n)
 	if err != nil {
 		return 0, err
@@ -189,7 +195,7 @@ func (h *Hivex) NodeTimestamp(node int64) (int64, error) {
 
 // NodeChildren returns a list of node children
 func (h *Hivex) NodeChildren(node int64) ([]int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	var ret *C.hive_node_h
 	var err error
 	ret, err = C.hivex_node_children(h.han, n)
@@ -212,7 +218,7 @@ func (h *Hivex) NodeChildren(node int64) ([]int64, error) {
 
 // NodeGetChild gets a particular child of this node
 func (h *Hivex) NodeGetChild(node int64, name string) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	namePtr := C.CString(name)
 	defer C.free(unsafe.Pointer(namePtr))
 
@@ -225,7 +231,7 @@ func (h *Hivex) NodeGetChild(node int64, name string) (int64, error) {
 
 // NodeNrChildren returns the number of child nodes
 func (h *Hivex) NodeNrChildren(node int64) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 
 	ret, err := C.hivex_node_nr_children(h.han, n)
 	if err != nil {
@@ -236,7 +242,7 @@ func (h *Hivex) NodeNrChildren(node int64) (int64, error) {
 
 // NodeParent returns the parent node
 func (h *Hivex) NodeParent(node int64) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 
 	ret, err := C.hivex_node_parent(h.han, n)
 	if err != nil {
@@ -247,13 +253,13 @@ func (h *Hivex) NodeParent(node int64) (int64, error) {
 
 // NodeValues returns a list of values set for this node
 func (h *Hivex) NodeValues(node int64) ([]int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 
 	ret, err := C.hivex_node_values(h.han, n)
 	if err != nil {
 		return []int64{}, err
 	}
-	nn := C.memberSize(ret)
+	nn := C.memberSizeValue(ret)
 	if nn == 0 {
 		return []int64{}, nil
 	}
@@ -264,7 +270,7 @@ func (h *Hivex) NodeValues(node int64) ([]int64, error) {
 
 // NodeGetValue gets the value of a node
 func (h *Hivex) NodeGetValue(node int64, name string) (int64, error) {
-	n := (C.size_t)(node)
+	n := (C.hive_node_h)(node)
 	namePtr := C.CString(name)
 	defer C.free(unsafe.Pointer(namePtr))
 
@@ -470,7 +476,7 @@ type HiveValue struct {
 // NodeSetValues sets values on a node
 func (h *Hivex) NodeSetValues(node int64, values []HiveValue) (int, error) {
 	n := (C.hive_node_h)(node)
-	var sz C.size_t = (C.ulong)(len(values))
+	var sz C.size_t = (C.size_t)(len(values))
 	var val C.hive_set_value
 	var vals *C.hive_set_value = (*C.hive_set_value)(
 		C.malloc(
@@ -517,8 +523,8 @@ func (h *Hivex) NodeSetValue(node int64, value HiveValue) (int, error) {
 		len:   (C.size_t)(len(value.Value)),
 		value: (*C.char)(unsafe.Pointer(&value.Value[0])),
 	}
-	ret := C.set_values(newVal, C.int(0), C.int(1), converted)
-	if int(ret) != 0 {
+	setValRet := C.set_values(newVal, C.int(0), C.int(1), converted)
+	if int(setValRet) != 0 {
 		return 0, fmt.Errorf("failed to set value for nodes")
 	}
 	ret, err := C.hivex_node_set_value(h.han, n, newVal, 0)
